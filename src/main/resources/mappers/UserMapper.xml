@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.kewei.bookadmin.mapper.UserMapper">
+  <resultMap id="BaseResultMap" type="cn.kewei.bookadmin.pojo.User">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="role_id" jdbcType="BIGINT" property="roleId" />
+  </resultMap>
+  
+  <resultMap id="findAllResultMap" type="cn.kewei.bookadmin.pojo.User" extends="BaseResultMap">
+    <association property="role" columnPrefix="role_" javaType="cn.kewei.bookadmin.pojo.Role">
+      <id column="id" property="id"/>
+      <result column="name" property="name"/>
+      <result column="code" property="code"/>
+    </association>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, username, password, `status`, role_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+    <select id="findAll" resultMap="findAllResultMap">
+      select
+      u.id, u.username, u.password, u.status, u.role_id,
+             r.name as role_name, r.code as role_code
+      from user u, role r
+      where u.role_id != 1 and u.role_id = r.id
+    </select>
+
+
+  <select id="findByUsername" resultMap="findAllResultMap">
+    select
+      u.id, u.username, u.password, u.status, u.role_id,
+      r.name as role_name, r.code as role_code
+    from user u, role r
+    where u.username = #{username} and u.role_id = r.id
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from user
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="cn.kewei.bookadmin.pojo.User" useGeneratedKeys="true">
+    insert into user (username, password, `status`, role_id
+      )
+    values (#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{roleId}
+      )
+  </insert>
+
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="cn.kewei.bookadmin.pojo.User" useGeneratedKeys="true">
+    insert into user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="username != null">
+        username,
+      </if>
+      <if test="password != null">
+        password,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="roleId != null">
+        role_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="roleId != null">
+        #{roleId},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="cn.kewei.bookadmin.pojo.User">
+    update user
+    <set>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="roleId != null">
+        role_id = #{roleId},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.kewei.bookadmin.pojo.User">
+    update user
+    set username = #{username,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      `status` = #{status,jdbcType=INTEGER},
+        role_id = #{roleId}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <update id="updateStatusById">
+    update user
+    set `status` = #{status}
+    where id = #{id}
+  </update>
+</mapper>
