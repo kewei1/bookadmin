@@ -16,7 +16,7 @@ import java.util.Calendar;
  */
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = BookadminApplication.class)
+@SpringBootTest(classes = BookadminApplication. class)
 public class HttpTest {
     @Autowired
     private PasswordEncoder encoder;

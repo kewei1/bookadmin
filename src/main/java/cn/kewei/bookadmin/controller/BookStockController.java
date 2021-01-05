@@ -17,7 +17,6 @@ import java.util.List;
 public class BookStockController {
     @Autowired
     private IBookStockService bookStockService;
-
     @GetMapping("/list")
     public Result list() {
         try {
